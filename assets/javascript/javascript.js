@@ -1,20 +1,16 @@
- // Initial array of movies
- var movies = ["Fire", "Water", "Wind", "Earth"];
+ // Initial array of topics
+ var topics = ["Samuel Jackson", "Vin Diesel", "Morgan Freeman", "Sandra Bullock"];
 
  function createButton(title) {
-   var newBtn = $("<button class='gif-btn'>" + title + "</button>");
-   $("#gif-view").append(newBtn);
-
-   if ($("#gif-view").children().length%10 == 0) {
-       $("#gif-view").append($("<br>"));
-   }
+   var newBtn = $(`<button class='gif-btn btn btn-info btn-lg'>${title}</button>`);
+   $("#gif-btn-container").append(newBtn);
  };
 
  // Function for displaying movie data
  function renderButtons() {
 
-   for (var i = 0; i < movies.length; i++) {
-     createButton(movies[i]);
+   for (var i = 0; i < topics.length; i++) {
+     createButton(topics[i]);
    };
 
  };
@@ -27,28 +23,40 @@
 
  });
 
- $("#gif-view").on("click", ".gif-btn", function(event) {
+ $("#gif-btn-container").on("click", ".gif-btn", function(event) {
+   var button = this;
    $.ajax({
-     url: "https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=" + $(this).text() + "&limit=10",
+     url: "https://api.giphy.com/v1/gifs/search?api_key=0ykeCUek1iK3ICpMlF26BSnVqS8gzjAd&q=" + $(this).text() + "&limit=10",
      method: "GET"
    }).then(function(response) {
-       var randomGif = response.data[Math.floor(Math.random()*response.data.length)];
-       console.log(randomGif);
-        $("#poster").data("motion",randomGif.images.original.url);
-        $("#poster").data("still",randomGif.images.original_still.url);
-        $("#poster").attr("src",randomGif.images.original_still.url);
-
+      var gifs = response.data;
+      
+      for (var i = 0; i < gifs.length; i++) {
+        console.log(gifs[i]);
+        let stillPic = gifs[i].images.original_still.url;
+        let motionPic = gifs[i].images.original.url;
+        let rating = gifs[i].rating.toUpperCase();
+        var newCard = $(`
+        <div class="card" style="width: 18rem;">
+          <img class="poster" src="${stillPic}" data-motion="${motionPic}" data-still="${stillPic}" class="card-img-top" alt="" width="100%">
+          <div class="card-body">
+            <p class="card-text">Rating: ${rating}</p>
+          </div>
+        </div>
+        `);
+        $("#gif-stuff").append(newCard);
+      };
    });
  });
 
  renderButtons();
 
 
- $("#poster").on("click", function() {
-    if ($("#poster").attr("src") == $("#poster").data("still")) {
-        $("#poster").attr("src",$("#poster").data("motion"));
+ $("#gif-stuff").on("click", function() {
+    if ($(this).attr("src") == $(this).data("still")) {
+        $(this).attr("src",$(this).data("motion"));
     }
     else {
-        $("#poster").attr("src",$("#poster").data("still"));
+        $(this).attr("src",$(this).data("still"));
     }
  });
