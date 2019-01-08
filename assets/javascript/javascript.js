@@ -97,7 +97,7 @@ $(document).ready(function() {
       // If jumbotron doesn't already exist, create new one
       if (tron.length <= 0) {
         tron = createCarousel(deckId,button.text());
-        $("#gif-stuff").append(tron);
+        $("#gif-stuff").prepend(tron);
       };
       const row = tron.find(".row");
       const col = row.find(".column");
